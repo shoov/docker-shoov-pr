@@ -2,4 +2,5 @@
 
 cd /home/behat/data
 composer install --prefer-source
+cp behat.local.yml.example behat.local.yml
 ./bin/behat $*
