@@ -1,2 +1,5 @@
 #!/bin/sh
-cd /home/behat/data && /home/behat/composer/bin/behat $*
+
+cd /home/behat/data
+composer install --prefer-source
+./bin/behat $*
