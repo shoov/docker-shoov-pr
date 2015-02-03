@@ -28,10 +28,17 @@ RUN chown -R behat:behat /home/behat
 # Add "behat" to "sudoers"
 RUN echo "behat        ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
+# Clone oh-my-zsh
+RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /home/behat/.oh-my-zsh/
+
+# Get a Stable Behat copy
+
 USER behat
 WORKDIR /home/behat
 ENV HOME /home/behat
 ENV PATH $PATH:/home/behat
 
-# Clone oh-my-zsh
-RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /home/behat/.oh-my-zsh/
+# Install A fixed version of Behat
+RUN mkdir /home/behat/composer
+ADD composer.json /home/behat/composer/composer.json
+RUN cd /home/behat/composer && composer install --prefer-dist

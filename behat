@@ -1,6 +1,8 @@
 #!/bin/sh
 
-cd /home/behat/data
-composer install --prefer-source
+git clone $1 data
+cd data/$2
+
+cp -R /home/behat/composer/* .
 cp behat.local.yml.example behat.local.yml
-./bin/behat $*
+./bin/behat
