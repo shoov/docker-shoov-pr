@@ -1,8 +1,0 @@
-#!/bin/sh
-
-git clone $1 data
-cd data/$2
-
-cp -R /home/behat/composer/* .
-cp behat.local.yml.example behat.local.yml
-./bin/behat
