@@ -17,15 +17,15 @@ var prepareShFile = function(json) {
   return contents.join('\n');
 }
 
-fs.readFileAsync('./build/.shuv.yml')
+fs.readFileAsync('/home/behat/build/.shuv.yml')
   .then(function (data) {
     return yaml.safeLoad(data);
   })
   .then(function (json) {
-    return fs.writeFileAsync('./shuv.sh', prepareShFile(json));
+    return fs.writeFileAsync('/home/behat/shuv.sh', prepareShFile(json));
   })
   .then(function() {
-    return fs.chmodAsync('./shuv.sh', '777')
+    return fs.chmodAsync('/home/behat/shuv.sh', '777')
   })
   .catch(SyntaxError, function (e) {
     console.error("file contains invalid json");
