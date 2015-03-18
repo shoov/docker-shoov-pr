@@ -34,10 +34,10 @@ RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /home/behat/.oh-my-z
 RUN eval `ssh-agent -s`
 
 RUN mkdir /home/behat/build
-RUN chmod 664 /home/behat/build
+RUN chmod 777 /home/behat/build
 
 RUN mkdir /home/behat/.ssh
-RUN chmod 664 /home/behat/build
+RUN chmod 777 /home/behat/.ssh
 
 # Create known_hosts
 RUN touch /home/behat/.ssh/known_hosts
