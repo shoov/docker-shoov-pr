@@ -34,9 +34,10 @@ RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /home/behat/.oh-my-z
 RUN eval `ssh-agent -s`
 
 RUN mkdir /home/behat/build
-RUN chmod 777 /home/behat/build
+RUN chmod 664 /home/behat/build
 
 RUN mkdir /home/behat/.ssh
+RUN chmod 664 /home/behat/build
 
 # Create known_hosts
 RUN touch /home/behat/.ssh/known_hosts
@@ -49,11 +50,11 @@ ADD main.sh /home/behat/main.sh
 ADD package.json /home/behat/package.json
 ADD parse.js /home/behat/parse.js
 
-# RUN /home/behat/npm install
+RUN cd /home/behat && npm install
 
 USER behat
 WORKDIR /home/behat
 ENV HOME /home/behat
 ENV PATH $PATH:/home/behat
 
-CMD /home/behat/data/main.sh
+CMD /home/behat/main.sh
