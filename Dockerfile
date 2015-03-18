@@ -5,6 +5,8 @@ MAINTAINER Thomas VIAL
 RUN apt-get update
 RUN apt-get install -y curl zsh git vim
 RUN apt-get install -y -q php5-cli php5-curl
+
+RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
 RUN apt-get install -y nodejs
 
 # Install composer globally
@@ -35,7 +37,6 @@ RUN mkdir /home/behat/build
 RUN chmod 777 /home/behat/build
 
 RUN mkdir /home/behat/.ssh
-RUN chmod 777 /home/behat/.ssh
 
 # Create known_hosts
 RUN touch /home/behat/.ssh/known_hosts
@@ -43,6 +44,12 @@ RUN touch /home/behat/.ssh/known_hosts
 # Add Github key
 RUN ssh-keyscan -H github.com > /home/behat/.ssh/known_hosts
 
+# Add scripts
+ADD main.sh /home/behat/main.sh
+ADD package.json /home/behat/package.json
+ADD parse.js /home/behat/parse.js
+
+# RUN /home/behat/npm install
 
 USER behat
 WORKDIR /home/behat
