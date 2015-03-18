@@ -49,4 +49,4 @@ WORKDIR /home/behat
 ENV HOME /home/behat
 ENV PATH $PATH:/home/behat
 
-CMD ./home/behat/data/main.sh
+CMD /home/behat/data/main.sh
