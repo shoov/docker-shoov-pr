@@ -1,60 +1,38 @@
 FROM ubuntu:14.04
-MAINTAINER Thomas VIAL
+MAINTAINER Gizra
 
 # Update and install packages
 RUN apt-get update
 RUN apt-get install -y curl zsh git vim
-RUN apt-get install -y -q php5-cli php5-curl
 
-RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
+RUN curl -sL https://deb.nodesource.com/setup  | sudo bash -
 RUN apt-get install -y nodejs
 
-# Install composer globally
-RUN curl -sS https://getcomposer.org/installer | php
-RUN mv composer.phar /usr/local/bin/composer
-RUN chmod +x /usr/local/bin/composer
-
-# Create "behat" user with password crypted "behat"
-RUN useradd -d /home/behat -m -s /bin/zsh behat
-RUN echo "behat:behat" | chpasswd
-
-# Create a new zsh configuration from the provided template
-ADD .zshrc /home/behat/.zshrc
-
-# Fix permissions
-RUN chown -R behat:behat /home/behat
-
-# Add "behat" to "sudoers"
-RUN echo "behat        ALL=(ALL:ALL) ALL" >> /etc/sudoers
-
-# Clone oh-my-zsh
-RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /home/behat/.oh-my-zsh/
+# Install oh-my-zsh
+RUN curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
 
 # Enable ssh-agent
 RUN eval `ssh-agent -s`
 
-RUN mkdir /home/behat/build
-RUN chmod 777 /home/behat/build
-
-RUN mkdir /home/behat/.ssh
-RUN chmod 777 /home/behat/.ssh
+RUN mkdir /home/.ssh
 
 # Create known_hosts
-RUN touch /home/behat/.ssh/known_hosts
+RUN touch /home/.ssh/known_hosts
 
 # Add Github key
-RUN ssh-keyscan -H github.com > /home/behat/.ssh/known_hosts
+# RUN ssh-keyscan -H github.com > /home/.ssh/known_hosts
+# RUN ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts
 
 # Add scripts
-ADD main.sh /home/behat/main.sh
-ADD package.json /home/behat/package.json
-ADD parse.js /home/behat/parse.js
+ADD main.sh /home/main.sh
+ADD download_images.js /home/download_images.js
+ADD package.json /home/package.json
 
-RUN cd /home/behat && npm install
+# Temporary until "npm install" if fixed
+# RUN cd /home && npm install
+RUN cd /home && npm install  bluebird
+RUN cd /home && npm install  mkdirp
+RUN cd /home && npm install  ramda
+RUN cd /home && npm install  request-promise --verbose
 
-USER behat
-WORKDIR /home/behat
-ENV HOME /home/behat
-ENV PATH $PATH:/home/behat
-
-CMD /home/behat/main.sh
+CMD /home/main.sh
