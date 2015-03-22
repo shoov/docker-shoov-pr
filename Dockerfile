@@ -9,7 +9,8 @@ RUN curl -sL https://deb.nodesource.com/setup  | sudo bash -
 RUN apt-get install -y nodejs
 
 # Install oh-my-zsh
-RUN curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
+RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /root/.oh-my-zsh/
+ADD .zshrc /root/.zshrc
 
 # Enable ssh-agent
 RUN eval `ssh-agent -s`
