@@ -24,7 +24,7 @@ var getFilesInfo = function(ids) {
     url: backendUrl + '/api/screenshots/' + ids,
     qs: {
       access_token: accessToken,
-      fields: 'id,baseline_name,regression'
+      fields: 'id,baseline_name,regression,directory_prefix'
     }
   };
 
@@ -52,7 +52,7 @@ var downloadFile = function(obj) {
     }
   };
 
-  var fileName = obj.baseline_name;
+  var fileName = obj.directory_prefix + obj.baseline_name;
 
   mkdirp.mkdirpAsync(path.dirname(fileName))
     .then(function () {

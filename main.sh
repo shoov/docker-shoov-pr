@@ -27,7 +27,6 @@ git checkout -b $NEW_BRANCH
 node ../download_images.js $TOKEN $JSON
 
 # Push new branch
-ls -al
 git add --all
 git commit -am "New files"
 git push --set-upstream origin $NEW_BRANCH
