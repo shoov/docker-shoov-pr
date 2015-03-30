@@ -7,18 +7,20 @@ var R = require('ramda');
 
 var arguments = process.argv.slice(2);
 
+
 if (!arguments[0]) {
-  throw new Error('Access token not passed.');
-}
-else if (!arguments[1]) {
   throw new Error('Screenshots IDs not passed.');
 }
+else if (!arguments[1]) {
+  throw new Error('Access token not passed.');
+}
 
-var accessToken = arguments[0];
-var screenshotIds = arguments[1];
+var screenshotIds = arguments[0];
+var accessToken = arguments[1];
+
 
 var getFilesInfo = function(ids) {
-  var backendUrl = process.env.BACKEND_URL || 'http://1e32102f.ngrok.com/shuv/www';
+  var backendUrl = process.env.BACKEND_URL;
 
   var options = {
     url: backendUrl + '/api/screenshots/' + ids,
@@ -52,6 +54,7 @@ var downloadFile = function(obj) {
     }
   };
 
+  obj.directory_prefix = obj.directory_prefix || '';
   var fileName = obj.directory_prefix + obj.baseline_name;
 
   mkdirp.mkdirpAsync(path.dirname(fileName))

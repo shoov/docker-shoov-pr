@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 
-TOKEN=$1
-REPO=$2
-BRANCH=$3
-NEW_BRANCH=$4
-JSON=$5
-SSH_KEY=$6
+BUILD_ID=$1
+SCREENSHOT_IDS=$2
+NEW_BRANCH=$3
+ACCESS_TOKEN=$4
+
+BUILD_INFO=$(node /home/build_info.js $BUILD_ID $ACCESS_TOKEN)
+
+# Get the values from the JSON and trim the qoute (") signs.
+OWNER=$(echo $BUILD_INFO | jq '.owner' | cut -d '"' -f 2)
+REPO=$(echo $BUILD_INFO | jq '.repo' | cut -d '"' -f 2)
+BRANCH=$(echo $BUILD_INFO | jq '.branch' | cut -d '"' -f 2)
 
 # Create an SSH key.
 touch ~/.ssh/id_rsa
-echo $SSH_KEY | base64 --decode > ~/.ssh/id_rsa
+node /home/get_ssh.js $BUILD_ID $ACCESS_TOKEN > ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 
 # Clone repo
@@ -19,14 +24,25 @@ mkdir clone
 git config --global user.email "robot@example.com"
 git config --global user.name "Robot"
 
+
+# Setup hub
+node /home/get_hub.js $ACCESS_TOKEN
+
+# Clone repo
 cd clone
-git clone --branch=$BRANCH --depth=1 --quiet $REPO .
+hub clone -p --branch=$BRANCH --depth=1 --quiet $OWNER/$REPO .
 git checkout -b $NEW_BRANCH
 
 # Download images
-node ../download_images.js $TOKEN $JSON
+node /home/download_images.js $SCREENSHOT_IDS $ACCESS_TOKEN
 
 # Push new branch
 git add --all
 git commit -am "New files"
 git push --set-upstream origin $NEW_BRANCH
+
+# Open Pull request
+PR=$(hub pull-request -m "Update baseline from branch $BRANCH" -b $OWNER:$BRANCH -h $OWNER:$NEW_BRANCH)
+
+# Send back the pull request info to the build
+curl -X PATCH $BACKEND_URL/api/builds/$BUILD_ID?access_token=$ACCESS_TOKEN -d "pull_request=$PR"
